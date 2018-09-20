@@ -18,7 +18,7 @@ export default class StyleEntry extends Entry {
     if (!this.getDestinationPath()) super.initializeDestination();
     const pathTokens = this.getDestinationPath().split(path.sep);
     const { name } = path.parse(this.getDestinationPath());
-    pathTokens.splice(-1, 1, `${name}.wxss`);
+    pathTokens.splice(-1, 1, `${name}.css`);
     this.setDestinationPath(pathTokens.join(path.sep));
   }
   private async transform() {

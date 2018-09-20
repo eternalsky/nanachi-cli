@@ -4,10 +4,10 @@ const jsx = require('../utils');
 const chalk = require('chalk');
 const { createElement, createAttribute } = jsx;
 /**
- * 本模板将array.map(fn)变成<block wx:for="{{}}"></block>
- * 将if(xxx){}变成<block wx:if="{{xxx}}"></block>
- * 将xxx? aaa: bbb变成<block wx:if="aaa">aaa</block>
- * <block wx:if="!xxx">bbb</block>
+ * 本模板将array.map(fn)变成<block s-for="{{}}"></block>
+ * 将if(xxx){}变成<block s-if="{{xxx}}"></block>
+ * 将xxx? aaa: bbb变成<block s-if="aaa">aaa</block>
+ * <block s-if="!xxx">bbb</block>
  */
 const rexpr = /(^|[^\w.])this\./g;
 
@@ -53,19 +53,19 @@ function logic(expr, modules) {
 function condition(test, consequent, alternate, modules) {
     var ifNode = createElement(
         'block',
-        [createAttribute('wx:if', parseExpr(test))],
+        [createAttribute('s-if', parseExpr(test))],
         [logic(consequent, modules) || wrapText(consequent)]
     );
     var ret = ifNode;
     // null就不用创建一个<block>元素了，&&表达式也不需要创建<block>元素
     if (alternate && alternate.type !== 'NullLiteral') {
         // 如果存在if分支，那么就再包一层，一共三个block,
-        // <block><block wx:if /><block wx:else /></block>
+        // <block><block s-if /><block s-else /></block>
         ret = createElement('block', [], [ifNode]);
 
         var elseNode = createElement(
             'block',
-            [createAttribute('wx:else', 'true')],
+            [createAttribute('s-else', 'true')],
             [logic(alternate, modules) || wrapText(alternate)]
         );
         ret.children.push(elseNode);
@@ -77,15 +77,15 @@ function condition(test, consequent, alternate, modules) {
 function loop(callee, fn, modules) {
     const attrs = [];
 
-    attrs.push(createAttribute('wx:for', parseExpr(callee.object)));
-    attrs.push(createAttribute('wx:for-item', fn.params[0].name));
-    attrs.push(createAttribute('wx:for-index', fn.params[1].name));
+    attrs.push(createAttribute('s-for', parseExpr(callee.object)));
+    attrs.push(createAttribute('s-for-item', fn.params[0].name));
+    attrs.push(createAttribute('s-for-index', fn.params[1].name));
     if (modules.key) {
-        attrs.push(createAttribute('wx:key', jsx.genKey(modules.key)));
+        attrs.push(createAttribute('s-key', jsx.genKey(modules.key)));
 
         modules.key = null;
     } else {
-        attrs.push(createAttribute('wx:key', '*this'));
+        attrs.push(createAttribute('s-key', '*this'));
         // console.log( fn.params[1].name);
     }
 

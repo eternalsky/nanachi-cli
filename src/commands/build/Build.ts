@@ -94,7 +94,7 @@ export default class {
     await Object.keys(this.fragments).map(
       id =>
         new Promise(async (resolve, reject) => {
-          const filePath = destDir + '/' + id + '.wxml';
+          const filePath = destDir + '/' + id + '.swan';
           await fs.ensureFile(filePath);
           await this.writeFile(filePath, this.fragments[id]);
         })
